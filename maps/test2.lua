@@ -9,8 +9,8 @@ return {
   height = 20,
   tilewidth = 16,
   tileheight = 16,
-  nextlayerid = 6,
-  nextobjectid = 48,
+  nextlayerid = 7,
+  nextobjectid = 52,
   properties = {},
   tilesets = {
     {
@@ -191,6 +191,54 @@ return {
           rotation = 0,
           visible = true,
           properties = {}
+        }
+      }
+    },
+    {
+      type = "objectgroup",
+      draworder = "topdown",
+      id = 6,
+      name = "Warps",
+      class = "",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      parallaxx = 1,
+      parallaxy = 1,
+      properties = {
+        ["doorId"] = 1
+      },
+      objects = {
+        {
+          id = 49,
+          name = "",
+          type = "",
+          shape = "point",
+          x = 432,
+          y = 224,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["warpId"] = 51
+          }
+        },
+        {
+          id = 51,
+          name = "",
+          type = "",
+          shape = "point",
+          x = 352,
+          y = 112,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["warpId"] = 49
+          }
         }
       }
     },

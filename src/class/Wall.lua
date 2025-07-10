@@ -39,9 +39,9 @@ function Walls:add(v)
     table.insert(self.walls, wall)
 end
 
-function Walls:update()
+function Walls:update(dt)
     for i,wall in ipairs(self.walls) do
-        wall:update()
+        wall:update(dt)
     end
 end
 

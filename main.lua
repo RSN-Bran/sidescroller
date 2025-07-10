@@ -16,6 +16,8 @@ function love.update(dt)
         player:update(dt)
         map:update(dt)
         cam:lookAt(player.pos.x, player.pos.y)
+    else
+        pauseMenu:update(dt)
     end
 
     --Execute stored callbacks
@@ -65,14 +67,31 @@ function love.draw()
 end
 
 function love.keypressed(key)
-    if key=="q" and gameState == GAME_STATE_PAUSE then
-        gameState = GAME_STATE_PLAYING
-    elseif key=="q" and gameState == GAME_STATE_PLAYING then
-        gameState = GAME_STATE_PAUSE
-    elseif key=="r" then
-        player:spawn()
-    elseif key=="space" then
-        player:jump()
+    
+    if gameState==GAME_STATE_PLAYING then
+        if key=="q" then
+            gameState = GAME_STATE_PAUSE
+        
+        elseif key=="space" then
+            player:jump()
+        end
+    elseif gameState==GAME_STATE_PAUSE then
+        if key=="q" then
+            gameState = GAME_STATE_PLAYING
+        elseif key=="up" then
+            pauseMenu:moveSelectorUp()
+        elseif key=="down" then
+            pauseMenu:moveSelectorDown()
+        elseif key=="return" then
+            local action = pauseMenu.pauseOptions.options[pauseMenu.currentOptionIndex].action
+            if not isempty(action) then
+                action()
+            end
+        end
+    elseif gameState==GAME_STATE_DEAD then
+        if key=="r" then
+            player:spawn()
+        end
     end
 end
 
@@ -105,6 +124,7 @@ function loadRequirements()
     require('/src/class/Checkpoint')
     require('/src/class/Spike')
     require('/src/class/PauseMenu')
+    require('/src/class/Warp')
     --require('/src/class/Settings')
 
     require('/src/constants')
@@ -126,7 +146,7 @@ function gameStart()
     
     cam = camera()
     gameState = GAME_STATE_PLAYING
-    gravity = 10000
+    gravity = 1000
     world = love.physics.newWorld(0,gravity)
     world:setCallbacks(OnCollisionEnter, OnCollisionExit, presolve, postsolve)
     map = Map:new('maps/test2.lua')

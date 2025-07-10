@@ -8,6 +8,7 @@ function Player:new()
     instance.spawnLocation = {x=0, y=0}
 
     instance.pos = {x=instance.spawnLocation.x, y=instance.spawnLocation.y}
+    instance.velocity = {x=0, y=0}
     instance.spriteSheet = love.graphics.newImage('assets/sprites/guy-sheet.png')
 
     instance.currentHealth=5
@@ -26,6 +27,7 @@ function Player:new()
     instance.width, instance.height = 16,16
     instance.shape = love.physics.newRectangleShape(instance.width/2, instance.height/2, instance.width, instance.height)
     instance.body=love.physics.newBody(world, instance.pos.x, instance.pos.y, "dynamic")
+    instance.body:setLinearDamping(.9)
     instance.body:setUserData({shape=instance.shape, width=instance.width, height=instance.height})
     instance.body:setFixedRotation(true)
     
@@ -37,6 +39,7 @@ function Player:new()
     instance.groundDetectionFixture:setUserData({type=COLLIDER_TYPE_PLAYER_GROUND_DETECTION, obj=instance})
     
     instance.hasJump=true
+    instance.isJumping=false
     
     return instance
 end
@@ -71,22 +74,33 @@ end
 function Player:jump()
     if self.hasJump then
         gravity = 10
-        self.body:setLinearVelocity(0, -4000)
+        self.body:applyLinearImpulse(0, -100, self.pos.x, self.pos.y)
         self.pos.x, self.pos.y = self.body:getPosition()
         self.hasJump=false
+        self.isJumping=true
     end
     
 end
 
+function Player:warp(x, y, warp)
+    self.body:setPosition(x,y)
+end
+
 function Player:update(dt)
     if gameState ~= "DEAD" then
-        local speed=150
-        local dx,dy=0,0
+        local maxSpeed=200
+        self.velocity.x, self.velocity.y = self.body:getLinearVelocity()
         if love.keyboard.isDown("left") then
-            dx=-speed
+            self.velocity.x = self.velocity.x-40
+            if self.velocity.x < -maxSpeed then
+                self.velocity.x=-maxSpeed
+            end
             self.currentAnimation=self.animations.left
         elseif love.keyboard.isDown("right") then
-            dx=speed
+            self.velocity.x = self.velocity.x+40
+            if self.velocity.x > maxSpeed then
+                self.velocity.x=maxSpeed
+            end
             self.currentAnimation=self.animations.right
         else
             self.currentAnimation=self.animations.idle
@@ -94,13 +108,14 @@ function Player:update(dt)
 
         self.currentAnimation:update(dt)
 
-        self.body:setLinearVelocity(dx, dy)
+        self.body:setLinearVelocity(self.velocity.x, self.velocity.y)
 
         self.pos.x, self.pos.y = self.body:getPosition()
         if self.invincibilityFrames > 0 then
             self.invincibilityFrames=self.invincibilityFrames-1
             self.invincibilityAnimationToggle = not self.invincibilityAnimationToggle
         end
+
         
     end
 

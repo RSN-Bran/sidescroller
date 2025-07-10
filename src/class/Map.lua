@@ -15,10 +15,10 @@ end
 function Map:load()
     self.stiProperties = sti(self.stiFile)
 
-    print(self.stiProperties.layers[2].objects[1])
     self.wallLayer = filter(self.stiProperties.layers, "name", "=", "Wall")[1]
     self.tileLayer = filter(self.stiProperties.layers, "name", "=", "Tile Layer 1")[1]
     local spawnObjs = filter(self.stiProperties.layers, "name", "=", "Spawns")[1]
+    local warpObjs = filter(self.stiProperties.layers, "name", "=", "Warps")[1]
     local spikeObjs = filter(self.stiProperties.layers, "name", "=", "Spikes")[1]
 
     self.walls = Walls:new()
@@ -31,18 +31,23 @@ function Map:load()
         self.checkpoints:add(v)
     end
 
+    self.warps = Warps:new()
+    for i,v in ipairs(warpObjs.objects) do
+        self.warps:add(v)
+    end
+
     self.spikes = Spikes:new()
     for i,v in ipairs(spikeObjs.objects) do
         self.spikes:add(v)
     end
 
     self.currentCheckpoint = filter(self.checkpoints.checkpoints, "isInitial", "=", true)[1]
-    print(self.currentCheckpoint)
 end
 
 function Map:update(dt)
-    self.walls:update()
-    self.checkpoints:update()
+    self.walls:update(dt)
+    self.checkpoints:update(dt)
+    self.warps:update(dt)
     -- for i,v in ipairs(self.spawners) do
     --     v:update(dt)
     -- end
@@ -50,6 +55,7 @@ end
 function Map:draw()
     self.walls:draw()
     self.checkpoints:draw()
+    self.warps:draw()
     self.stiProperties:drawLayer(self.tileLayer)
     self.stiProperties:drawLayer(self.wallLayer)
 end

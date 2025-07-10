@@ -8,7 +8,18 @@ function Checkpoint:new(v)
     instance.body=love.physics.newBody(world, instance.pos.x, instance.pos.y, "kinematic")
     instance.shape = love.physics.newCircleShape(5)
     instance.fixture=love.physics.newFixture(instance.body, instance.shape)
+
+    instance.isCollected=false
+
+    instance.spriteSheet = love.graphics.newImage('assets/sprites/flag-sheet.png')
     
+    instance.spriteGrid = anim8.newGrid(16, 16, instance.spriteSheet:getWidth(), instance.spriteSheet:getHeight())
+    instance.animations = {}
+    
+    instance.animations.idleInactive = anim8.newAnimation( instance.spriteGrid('1-2', 1), 0.5)
+    instance.animations.idleActive = anim8.newAnimation( instance.spriteGrid('3-4', 1), 0.5)
+    instance.currentAnimation=instance.animations.idleInactive
+
     instance.isInitial = v.name=="Initial"
     instance.fixture:setUserData({type="Checkpoint", obj=instance})
     instance.fixture:setSensor(true)
@@ -18,13 +29,19 @@ function Checkpoint:new(v)
     return instance
 end
 
+function Checkpoint:activate()
+    self.isCollected=true
+    self.currentAnimation=self.animations.idleActive
+end
+
 function Checkpoint:update(dt)
     self.body:setLinearVelocity(0, 0)
     self.pos.x, self.pos.y = self.body:getPosition()
+    self.currentAnimation:update(dt)
 end
 
 function Checkpoint:draw()
-    love.graphics.draw(self.sprite, self.pos.x, self.pos.y)
+    self.currentAnimation:draw(self.spriteSheet, self.pos.x-self.sprite:getWidth(), self.pos.y-self.sprite:getHeight(), nil)
 end
 
 
@@ -41,9 +58,9 @@ function Checkpoints:add(v)
     table.insert(self.checkpoints, checkpoint)
 end
 
-function Checkpoints:update()
+function Checkpoints:update(dt)
     for i,checkpoint in ipairs(self.checkpoints) do
-        checkpoint:update()
+        checkpoint:update(dt)
     end
 end
 
