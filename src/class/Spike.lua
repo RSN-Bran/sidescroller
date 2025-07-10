@@ -1,9 +1,9 @@
-Wall = {}
-Wall.__index = Wall
+Spike = {}
+Spike.__index = Spike
 
-function Wall:new(v)
+function Spike:new(v)
     
-    local instance = setmetatable({}, Wall)
+    local instance = setmetatable({}, Spike)
 
     instance.pos = {x=v.x, y=v.y}
     instance.width, instance.height = v.width, v.height
@@ -11,43 +11,44 @@ function Wall:new(v)
     instance.body:setFixedRotation(true)
     instance.shape = love.physics.newRectangleShape((instance.width/2), (instance.height/2), instance.width, instance.height)
     instance.fixture=love.physics.newFixture(instance.body, instance.shape)
-    instance.fixture:setUserData({type=COLLIDER_TYPE_WALL, obj=instance})
+    instance.fixture:setUserData({type="Spike", obj=instance})
+    instance.fixture:setSensor(true)
     
 
     return instance
 end
 
-function Wall:update(dt)
+function Spike:update(dt)
     self.body:setLinearVelocity(0, 0)
     self.pos.x, self.pos.y = self.body:getPosition()
 end
-function Wall:draw()
+function Spike:draw()
     love.graphics.rectangle("line", self.pos.x, self.pos.y, self.width, self.height)
 end
 
 
-Walls = {}
-Walls.__index = Walls
-function Walls:new()
-    local instance = setmetatable({}, Walls)
-    instance.walls = {}
+Spikes = {}
+Spikes.__index = Spikes
+function Spikes:new()
+    local instance = setmetatable({}, Spikes)
+    instance.spikes = {}
     return instance
 end
 
-function Walls:add(v)
-    local wall = Wall:new(v)
-    table.insert(self.walls, wall)
+function Spikes:add(v)
+    local wall = Spike:new(v)
+    table.insert(self.spikes, wall)
 end
 
-function Walls:update()
-    for i,wall in ipairs(self.walls) do
+function Spikes:update()
+    for i,wall in ipairs(self.spikes) do
         wall:update()
     end
 end
 
-function Walls:draw()
+function Spikes:draw()
     
-    for i,wall in ipairs(self.walls) do
+    for i,wall in ipairs(self.spikes) do
         wall:draw()
     end
 end
