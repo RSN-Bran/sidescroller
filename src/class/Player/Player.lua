@@ -11,8 +11,7 @@ function Player:new()
     instance.velocity = {x=0, y=0}
     instance.spriteSheet = love.graphics.newImage('assets/sprites/guy-sheet.png')
 
-    instance.currentHealth=5
-    instance.maxHealth=instance.currentHealth
+    instance.health=PlayerHealth:new(5)
 
     instance.invincibilityFrames=0
     instance.invincibilityAnimationToggle=true
@@ -37,7 +36,7 @@ function Player:new()
     instance.groundDetectionShape=love.physics.newRectangleShape((instance.width/2)-5, instance.height, instance.width-10, 1)
     instance.groundDetectionFixture=love.physics.newFixture(instance.body, instance.groundDetectionShape)
     instance.groundDetectionFixture:setUserData({type=COLLIDER_TYPE_PLAYER_GROUND_DETECTION, obj=instance})
-    
+
     instance.hasJump=true
     instance.isJumping=false
     
@@ -45,21 +44,26 @@ function Player:new()
 end
 
 function Player:spawn()
-    self.currentHealth=self.maxHealth
-    local currentCheckpoint = map.currentCheckpoint
+    --Ensure momentum doesn't carry over
+    self.body:setLinearVelocity(0, 0)
 
-    
+    --Initialize the player's health
+    self.health:spawn()
+
+    --Set the spawn to the Map's currently enabled checkpoint
+    local currentCheckpoint = map.currentCheckpoint
     self.body:setPosition(currentCheckpoint.pos.x, currentCheckpoint.pos.y)
     self.pos.x, self.pos.y = player.body:getPosition()
 
+    --Update the game state
     gameState = "PLAYING"
 
 end
 
 function Player:hurt(damage)
     if self.invincibilityFrames <= 0 then
-        self.currentHealth=self.currentHealth-damage
-        if self.currentHealth <= 0 then
+        self.health:hurt(damage)
+        if self.health.currentHealth <= 0 then
             self:kill()
         else
             self.invincibilityFrames=INVINCIBILITY_FRAMES
@@ -82,7 +86,7 @@ function Player:jump()
     
 end
 
-function Player:warp(x, y, warp)
+function Player:warp(x, y)
     self.body:setPosition(x,y)
 end
 
@@ -107,6 +111,7 @@ function Player:update(dt)
         end
 
         self.currentAnimation:update(dt)
+        self.health:update(dt)
 
         self.body:setLinearVelocity(self.velocity.x, self.velocity.y)
 

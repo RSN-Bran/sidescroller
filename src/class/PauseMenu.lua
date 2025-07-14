@@ -10,6 +10,10 @@ PAUSE_OPTIONS={
             action=function() gameState = GAME_STATE_PLAYING end
         },
         {
+            name="Reset",
+            action=function() love.load() end
+        },
+        {
             name="Settings",
             action=function() pauseMenu:loadMenu(SETTINGS_OPTIONS) end
         },
@@ -78,7 +82,7 @@ end
 
 function PauseMenu:draw()
     --love.graphics.setColor(1,1,1)
-    love.graphics.rectangle("fill", love.graphics.getWidth()/4, love.graphics.getHeight()/4, love.graphics.getWidth()/2, love.graphics.getHeight()/2)
+    love.graphics.rectangle("line", love.graphics.getWidth()/4, love.graphics.getHeight()/4, love.graphics.getWidth()/2, love.graphics.getHeight()/2)
     
     for i,v in ipairs(self.pauseOptions.options) do
         local x, y = love.graphics.getWidth()/2, (love.graphics.getHeight()/4)+i*20

@@ -15,53 +15,34 @@ function love.update(dt)
         world:update(dt)
         player:update(dt)
         map:update(dt)
-        cam:lookAt(player.pos.x, player.pos.y)
+        updateCamera(dt)
+        
     else
         pauseMenu:update(dt)
     end
 
-    --Execute stored callbacks
-    for i,v in ipairs(callbacks) do
-        v()
-    end
-    callbacks = {}
+    executeUpdateCallbacks(dt)
 end
 
 function love.draw()
-  
+
     
-    if gameState==GAME_STATE_DEAD then
-        love.graphics.print("You Died. Press 'r' to respawn")
-    else
-        love.graphics.print("Health: "..player.currentHealth)
-    end
-    if gameState == GAME_STATE_PAUSE then
-        pauseMenu:draw()
-    end
     cam:attach()
         
         map:draw()
         player:draw()
-
-        if DISPLAY_COLLIDERS then
-            local items, len = world:getBodies()
-            for i,v in ipairs(items) do
-                local bodyData = v:getUserData()
-                if bodyData then
-                    local shape=bodyData.shape
-                    if shape:getType()=="polygon" then
-                        local x,y=v:getPosition()
-                        love.graphics.rectangle("line", x, y, bodyData.width, bodyData.height)
-                    end
-                end
-            end
-        end
+        drawColliders()
         
-        -- for i = 1, len do
-        --     local x, y, w, h = world:getRect(items[i])
-        --     love.graphics.rectangle("line", x, y, w, h)
-        -- end
     cam:detach()
+
+    if gameState==GAME_STATE_DEAD then
+        love.graphics.print("You Died. Press 'r' to respawn")
+    else
+        player.health:draw()
+    end
+    if gameState == GAME_STATE_PAUSE then
+        pauseMenu:draw()
+    end
     
     
 end
@@ -118,7 +99,8 @@ function loadRequirements()
 
     love.graphics.setDefaultFilter("nearest", "nearest")
 
-    require('/src/class/Player')
+    require('/src/class/Player/Player')
+    require('/src/class/Player/PlayerHealth')
     require('/src/class/Wall')
     require('/src/class/Map')
     require('/src/class/Checkpoint')
@@ -129,6 +111,9 @@ function loadRequirements()
 
     require('/src/constants')
     require('/src/collision')
+    require('/src/update')
+    require('/src/draw')
+    
 
     require('/global/functions')
 end
@@ -140,11 +125,12 @@ end
 function loadSettings()
     love.window.setMode(640, 360)
     
+    
 end
 function gameStart()
 
-    
     cam = camera()
+    
     gameState = GAME_STATE_PLAYING
     gravity = 1000
     world = love.physics.newWorld(0,gravity)

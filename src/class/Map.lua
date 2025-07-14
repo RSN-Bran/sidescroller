@@ -8,7 +8,7 @@ function Map:new(stiFile)
     local stiProperties = sti(stiFile)
     instance.name = stiProperties.properties.name
     instance.dimensions = {x=stiProperties.width, y=stiProperties.height}
-
+    instance.pixelDimensions = {x=instance.dimensions.x*16, y=instance.dimensions.y*16}
     return instance
 end
 
