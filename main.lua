@@ -119,7 +119,6 @@ function loadRequirements()
 end
 
 function loadAssets()
-    checkpointSprite = love.graphics.newImage('assets/sprites/flag.png')
 end
 
 function loadSettings()

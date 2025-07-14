@@ -24,8 +24,6 @@ function Checkpoint:new(v)
     instance.fixture:setUserData({type="Checkpoint", obj=instance})
     instance.fixture:setSensor(true)
 
-    instance.sprite=checkpointSprite
-
     return instance
 end
 
@@ -41,7 +39,8 @@ function Checkpoint:update(dt)
 end
 
 function Checkpoint:draw()
-    self.currentAnimation:draw(self.spriteSheet, self.pos.x-self.sprite:getWidth(), self.pos.y-self.sprite:getHeight(), nil)
+    self.currentAnimation:draw(self.spriteSheet, self.pos.x, self.pos.y, nil)
+    self.currentAnimation:draw(self.spriteSheet, self.pos.x-TILE_SIZE, self.pos.y-TILE_SIZE, nil)
 end
 
 

@@ -18,3 +18,6 @@ DISPLAY_COLLIDERS=true
 
 --Height of the HUD in pixels
 HUD_HEIGHT=40
+
+--Size of tiles in pixels
+TILE_SIZE=16
