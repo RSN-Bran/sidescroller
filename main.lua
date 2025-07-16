@@ -26,6 +26,7 @@ end
 
 function love.draw()
 
+    --love.graphics.scale(settings.scale, settings.scale)
     
     cam:attach()
         
@@ -35,6 +36,8 @@ function love.draw()
         
     cam:detach()
 
+    love.graphics.push()
+    love.graphics.scale(settings.scale, settings.scale)
     if gameState==GAME_STATE_DEAD then
         love.graphics.print("You Died. Press 'r' to respawn")
     else
@@ -43,6 +46,7 @@ function love.draw()
     if gameState == GAME_STATE_PAUSE then
         pauseMenu:draw()
     end
+    love.graphics.pop()
     
     
 end
@@ -89,6 +93,7 @@ end
 
 function init()
     callbacks = {}
+    
 end
 
 function loadRequirements()
@@ -107,6 +112,7 @@ function loadRequirements()
     require('/src/class/Spike')
     require('/src/class/PauseMenu')
     require('/src/class/Warp')
+    require('/src/class/Settings')
     --require('/src/class/Settings')
 
     require('/src/constants')
@@ -122,13 +128,15 @@ function loadAssets()
 end
 
 function loadSettings()
-    love.window.setMode(640, 360)
+    cam = camera()
+    settings = Settings:new()
+    settings:updateScale(1)
     
     
 end
 function gameStart()
 
-    cam = camera()
+    
     
     gameState = GAME_STATE_PLAYING
     gravity = 1000

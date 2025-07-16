@@ -16,14 +16,14 @@ function Player:new()
     instance.invincibilityFrames=0
     instance.invincibilityAnimationToggle=true
 
-    instance.spriteGrid = anim8.newGrid(16, 16, instance.spriteSheet:getWidth(), instance.spriteSheet:getHeight())
+    instance.spriteGrid = anim8.newGrid(BASE_TILE_SIZE, BASE_TILE_SIZE, instance.spriteSheet:getWidth(), instance.spriteSheet:getHeight())
     instance.animations = {}
     instance.animations.idle = anim8.newAnimation( instance.spriteGrid('1-4', 1), 0.2)
     instance.animations.right = anim8.newAnimation( instance.spriteGrid('5-6', 1), 0.2)
     instance.animations.left = anim8.newAnimation( instance.spriteGrid('7-8', 1), 0.2)
 
     instance.currentAnimation={}
-    instance.width, instance.height = 16,16
+    instance.width, instance.height = BASE_TILE_SIZE,BASE_TILE_SIZE
     instance.shape = love.physics.newRectangleShape(instance.width/2, instance.height/2, instance.width, instance.height)
     instance.body=love.physics.newBody(world, instance.pos.x, instance.pos.y, "dynamic")
     instance.body:setLinearDamping(.9)

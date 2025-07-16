@@ -40,7 +40,7 @@ end
 
 function Checkpoint:draw()
     self.currentAnimation:draw(self.spriteSheet, self.pos.x, self.pos.y, nil)
-    self.currentAnimation:draw(self.spriteSheet, self.pos.x-TILE_SIZE, self.pos.y-TILE_SIZE, nil)
+    self.currentAnimation:draw(self.spriteSheet, self.pos.x-BASE_TILE_SIZE, self.pos.y-BASE_TILE_SIZE, nil)
 end
 
 

@@ -29,11 +29,40 @@ SETTINGS_OPTIONS={
     bAction=function() pauseMenu:loadMenu(PAUSE_OPTIONS) end,
     options={
         {
-            name="Test",
-            action=function() gameState = GAME_STATE_PLAYING end
+            name="Resolution",
+            action=function() pauseMenu:loadMenu(RESOLUTION_OPTIONS) end
+        },
+        {
+            name="Back",
+            action=function() pauseMenu:loadMenu(PAUSE_OPTIONS) end
         },
     }
 }
+
+RESOLUTION_OPTIONS={
+    menuName="Resolution",
+    bAction=function() pauseMenu:loadMenu(SETTINGS_OPTIONS) end,
+    options={
+        {
+            name="640x360",
+            action=function() settings:updateScale(1) end
+        },
+        {
+            name="1280x720",
+            action=function() settings:updateScale(2) end
+        },
+        {
+            name="1920x1080",
+            action=function() settings:updateScale(3) end
+        },
+        {
+            name="Back",
+            action=function() pauseMenu:loadMenu(SETTINGS_OPTIONS) end
+        },
+    }
+}
+
+
 
 function PauseMenu:new()
     local instance = setmetatable({}, PauseMenu)
@@ -82,10 +111,10 @@ end
 
 function PauseMenu:draw()
     --love.graphics.setColor(1,1,1)
-    love.graphics.rectangle("line", love.graphics.getWidth()/4, love.graphics.getHeight()/4, love.graphics.getWidth()/2, love.graphics.getHeight()/2)
+    love.graphics.rectangle("line", GAME_WIDTH/4, GAME_HEIGHT/4, GAME_WIDTH/2, GAME_HEIGHT/2)
     
     for i,v in ipairs(self.pauseOptions.options) do
-        local x, y = love.graphics.getWidth()/2, (love.graphics.getHeight()/4)+i*20
+        local x, y = GAME_WIDTH/2, (GAME_HEIGHT/4)+i*20
         if i==self.currentOptionIndex then
             self.currentAnimation:draw(self.spriteSheet, x-20, y, nil)
         end
