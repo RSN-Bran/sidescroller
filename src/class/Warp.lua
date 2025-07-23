@@ -23,12 +23,12 @@ function Warp:new(v)
     instance.fixture:setSensor(true)
     instance.isActive=true
 
-
     return instance
 end
 
 
 function Warp:update(dt)
+    
     self.currentAnimation:update(dt)
 end
 
@@ -36,28 +36,7 @@ function Warp:draw()
     self.currentAnimation:draw(self.spriteSheet, self.pos.x, self.pos.y, nil)
 end
 
-
-Warps = {}
-Warps.__index = Warps
-function Warps:new()
-    local instance = setmetatable({}, Warps)
-    instance.warps = {}
-    return instance
-end
-
-function Warps:add(v)
-    local warp = Warp:new(v)
-    table.insert(self.warps, warp)
-end
-
-function Warps:update(dt)
-    for i,warp in ipairs(self.warps) do
-        warp:update(dt)
-    end
-end
-
-function Warps:draw()
-    for i,warp in ipairs(self.warps) do
-        warp:draw()
-    end
+function Warp:destroy()
+    self.fixture:destroy()
+    self.body:destroy()
 end

@@ -15,48 +15,69 @@ end
 function Map:load()
     self.stiProperties = sti(self.stiFile)
 
-    self.wallLayer = filter(self.stiProperties.layers, "name", "=", "Wall")[1]
     self.tileLayer = filter(self.stiProperties.layers, "name", "=", "Tile Layer 1")[1]
     local spawnObjs = filter(self.stiProperties.layers, "name", "=", "Spawns")[1]
-    local warpObjs = filter(self.stiProperties.layers, "name", "=", "Warps")[1]
-    local spikeObjs = filter(self.stiProperties.layers, "name", "=", "Spikes")[1]
 
-    self.walls = Walls:new()
-    for i,v in ipairs(self.wallLayer.objects) do
-        self.walls:add(v)
+    
+
+    if not isempty(spawnObjs) then
+        self.checkpoints = Checkpoints:new()
+        for i,v in ipairs(spawnObjs.objects) do
+            self.checkpoints:add(v)
+        end
     end
 
-    self.checkpoints = Checkpoints:new()
-    for i,v in ipairs(spawnObjs.objects) do
-        self.checkpoints:add(v)
-    end
+    --TERRAIN
+    local terrainObjs = getObjectsFromLayer(self.stiProperties.layers, "Terrain")
+    self.terrains=ObjectList:new(OBJECT_TYPE_TERRAIN)
+    self.terrains:add(terrainObjs)
 
-    self.warps = Warps:new()
-    for i,v in ipairs(warpObjs.objects) do
-        self.warps:add(v)
-    end
+    --SPIKES
+    local spikeObjs = getObjectsFromLayer(self.stiProperties.layers, "Spikes")
+    self.spikes=ObjectList:new(OBJECT_TYPE_SPIKE)
+    self.spikes:add(spikeObjs)
 
-    self.spikes = Spikes:new()
-    for i,v in ipairs(spikeObjs.objects) do
-        self.spikes:add(v)
-    end
+    --WARPS
+    local warpObjs = getObjectsFromLayer(self.stiProperties.layers, "Warps")
+    self.warps=ObjectList:new(OBJECT_TYPE_WARP)
+    self.warps:add(warpObjs)
+
+    --DOORS
+    local doorObjs = getObjectsFromLayer(self.stiProperties.layers, "Doors")
+    self.doors=ObjectList:new(OBJECT_TYPE_DOOR)
+    self.doors:add(doorObjs)
+
+    --ITEMS
+    local itemObjs = getObjectsFromLayer(self.stiProperties.layers, "Items")
+    self.items=ObjectList:new(OBJECT_TYPE_ITEM)
+    self.items:add(itemObjs)
 
     self.currentCheckpoint = filter(self.checkpoints.checkpoints, "isInitial", "=", true)[1]
 end
 
 function Map:update(dt)
-    self.walls:update(dt)
+    self.terrains:update(dt)
     self.checkpoints:update(dt)
     self.warps:update(dt)
-    -- for i,v in ipairs(self.spawners) do
-    --     v:update(dt)
-    -- end
+    self.doors:update(dt)
+    self.items:update(dt)
 end
 function Map:draw()
-    self.walls:draw()
+    self.terrains:draw()
+
     self.checkpoints:draw()
     self.warps:draw()
+    self.doors:draw()
+    self.items:draw()
     self.stiProperties:drawLayer(self.tileLayer)
-    self.stiProperties:drawLayer(self.wallLayer)
 end
+
+function Map:destroy()
+    self.terrains:destroy()
+    self.spikes:destroy()
+    self.warps:destroy()
+    self.doors:destroy()
+    self.items:destroy()
+end
+
 return Map

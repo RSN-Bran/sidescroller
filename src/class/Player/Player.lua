@@ -37,27 +37,41 @@ function Player:new()
     instance.groundDetectionFixture=love.physics.newFixture(instance.body, instance.groundDetectionShape)
     instance.groundDetectionFixture:setUserData({type=COLLIDER_TYPE_PLAYER_GROUND_DETECTION, obj=instance})
 
+    instance.itemsCollected={}
+
     instance.hasJump=true
     instance.isJumping=false
     
     return instance
 end
 
-function Player:spawn()
+function Player:init()
     --Ensure momentum doesn't carry over
     self.body:setLinearVelocity(0, 0)
 
     --Initialize the player's health
     self.health:spawn()
+end
 
+function Player:place(pos)
     --Set the spawn to the Map's currently enabled checkpoint
     local currentCheckpoint = map.currentCheckpoint
-    self.body:setPosition(currentCheckpoint.pos.x, currentCheckpoint.pos.y)
+    if isempty(pos) then
+        self.body:setPosition(currentCheckpoint.pos.x, currentCheckpoint.pos.y)
+    else
+        self.body:setPosition(pos.x, pos.y)
+    end
+    
     self.pos.x, self.pos.y = player.body:getPosition()
 
     --Update the game state
     gameState = "PLAYING"
 
+end
+
+function Player:spawn()
+    self:init()
+    self:place()
 end
 
 function Player:hurt(damage)

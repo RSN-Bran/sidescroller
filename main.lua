@@ -26,23 +26,24 @@ end
 
 function love.draw()
 
-    --love.graphics.scale(settings.scale, settings.scale)
-    
-    cam:attach()
-        
+    --Draw everything within the camera (Game)
+    cam:attach()   
         map:draw()
         player:draw()
         drawColliders()
         
     cam:detach()
 
+    --Update the game scale for menus
     love.graphics.push()
     love.graphics.scale(settings.scale, settings.scale)
+
     if gameState==GAME_STATE_DEAD then
         love.graphics.print("You Died. Press 'r' to respawn")
     else
         player.health:draw()
     end
+    love.graphics.print("Items Collected: "..#player.itemsCollected, 0, 20)
     if gameState == GAME_STATE_PAUSE then
         pauseMenu:draw()
     end
@@ -106,19 +107,25 @@ function loadRequirements()
 
     require('/src/class/Player/Player')
     require('/src/class/Player/PlayerHealth')
-    require('/src/class/Wall')
+    require('/src/class/ObjectList')
+    require('/src/class/Terrain')
     require('/src/class/Map')
     require('/src/class/Checkpoint')
     require('/src/class/Spike')
     require('/src/class/PauseMenu')
     require('/src/class/Warp')
+    require('/src/class/Item')
     require('/src/class/Settings')
+    require('/src/class/Door')
     --require('/src/class/Settings')
 
     require('/src/constants')
     require('/src/collision')
     require('/src/update')
     require('/src/draw')
+
+    --data
+    require('/src/data/maps')
     
 
     require('/global/functions')
@@ -134,6 +141,19 @@ function loadSettings()
     
     
 end
+
+function setMap(mapFile)
+    
+    if not isempty(map) then
+        map:destroy()
+    end
+
+    map = Map:new(mapFile)
+    
+    map:load()
+    
+    return map
+end
 function gameStart()
 
     
@@ -142,9 +162,11 @@ function gameStart()
     gravity = 1000
     world = love.physics.newWorld(0,gravity)
     world:setCallbacks(OnCollisionEnter, OnCollisionExit, presolve, postsolve)
-    map = Map:new('maps/test2.lua')
-    pauseMenu=PauseMenu:new()
-    map:load()
     player = Player:new()
-    player:spawn()
+    player:init()
+    map = setMap(MAP_TABLE[1])
+    player:place()
+    
+    pauseMenu=PauseMenu:new()
+    
 end

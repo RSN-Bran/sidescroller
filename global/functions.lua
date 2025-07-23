@@ -130,6 +130,16 @@ function concatTables(t1,t2)
     return t1
 end
 
+function getObjectsFromLayer(layerObj, layerName)
+    local objs= filter(layerObj, "name", "=", layerName)[1]
+    if isempty(objs) then
+        return {}
+    else 
+        return objs.objects
+    end
+end
+
+
 
 
 -- function slice (tbl, s, e)
