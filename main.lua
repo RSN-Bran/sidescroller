@@ -43,7 +43,7 @@ function love.draw()
     else
         player.health:draw()
     end
-    love.graphics.print("Items Collected: "..#player.itemsCollected, 0, 20)
+    love.graphics.print("Items Collected: "..player.itemCount, 0, 20)
     if gameState == GAME_STATE_PAUSE then
         pauseMenu:draw()
     end
@@ -53,42 +53,43 @@ function love.draw()
 end
 
 function love.keypressed(key)
-    
-    if gameState==GAME_STATE_PLAYING then
-        if key=="q" then
-            gameState = GAME_STATE_PAUSE
-        
-        elseif key=="space" then
-            player:jump()
-        end
-    elseif gameState==GAME_STATE_PAUSE then
-        if key=="q" then
-            gameState = GAME_STATE_PLAYING
-        elseif key=="up" then
-            pauseMenu:moveSelectorUp()
-        elseif key=="down" then
-            pauseMenu:moveSelectorDown()
-        elseif key=="return" then
-            local action = pauseMenu.pauseOptions.options[pauseMenu.currentOptionIndex].action
-            if not isempty(action) then
-                action()
-            end
-        end
-    elseif gameState==GAME_STATE_DEAD then
-        if key=="r" then
-            player:spawn()
-        end
+    if key=="lshift" then
+        startPressed()
+    elseif key=="z" then
+        aPressed()
+    elseif key=="x" then
+        bPressed()
+    elseif key=="up" then
+        upPressed()
+    elseif key=="down" then
+        downPressed()
     end
 end
 
 function love.gamepadpressed(joystick, button)
-
+    if isempty(controller) then
+        controller=joystick
+    end
+    if button=="start" then
+        startPressed()
+    elseif button=="a" then
+        aPressed()
+    elseif button=="b" then
+        bPressed()
+    elseif button=="dpup" then
+        upPressed()
+    elseif button=="dpdown" then
+        downPressed()
+    end
 end
 
 function love.joystickremoved(joystick)
 end
 
 function love.joystickadded(joystick)
+    if isempty(controller) then
+        controller=joystick
+    end
 end
 
 
@@ -123,9 +124,11 @@ function loadRequirements()
     require('/src/collision')
     require('/src/update')
     require('/src/draw')
+    require('/src/controls')
 
     --data
     require('/src/data/maps')
+    require('/src/data/items')
     
 
     require('/global/functions')
@@ -157,7 +160,7 @@ end
 function gameStart()
 
     
-    
+    controller = nil
     gameState = GAME_STATE_PLAYING
     gravity = 1000
     world = love.physics.newWorld(0,gravity)

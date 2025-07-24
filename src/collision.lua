@@ -112,5 +112,6 @@ end
 
 function collectItem(item)
     item:collect()
-    table.insert(player.itemsCollected, item.itemId)
+    player.itemsCollected[item.itemId] = true
+    player.itemCount=player.itemCount+1
 end

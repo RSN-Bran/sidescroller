@@ -10,6 +10,10 @@ PAUSE_OPTIONS={
             action=function() gameState = GAME_STATE_PLAYING end
         },
         {
+            name="Item Collection",
+            action=function() pauseMenu:loadMenu(createItemList()) end
+        },
+        {
             name="Reset",
             action=function() love.load() end
         },
@@ -67,6 +71,9 @@ RESOLUTION_OPTIONS={
 function PauseMenu:new()
     local instance = setmetatable({}, PauseMenu)
 
+    instance.sounds={}
+    instance.sounds.menuScroll=love.audio.newSource('assets/sounds/menu_sound.ogg', "static")
+
     instance.spriteSheet = love.graphics.newImage('assets/sprites/menu-arrow-sheet.png')
     instance.spriteGrid = anim8.newGrid(16, 16, instance.spriteSheet:getWidth(), instance.spriteSheet:getHeight())
 
@@ -87,6 +94,7 @@ function PauseMenu:loadMenu(menu)
 end
 
 function PauseMenu:moveSelectorUp()
+    self.sounds.menuScroll:play()
     if self.currentOptionIndex==1 then
         self.currentOptionIndex=#self.pauseOptions.options
     else
@@ -95,6 +103,7 @@ function PauseMenu:moveSelectorUp()
 end
 
 function PauseMenu:moveSelectorDown()
+    self.sounds.menuScroll:play()
     if self.currentOptionIndex==#self.pauseOptions.options then
         self.currentOptionIndex=1
     else
@@ -123,4 +132,28 @@ function PauseMenu:draw()
     end
 end
 
+function createItemList()
+    local menu={
+        menuName="Item Collection",
+        bAction=function() pauseMenu:loadMenu(PAUSE_OPTIONS) end,
+        options={}
+    }
+    for i,item in ipairs(ITEM_TABLE) do
+        local name = ""
+        if player.itemsCollected[i]==true then
+            name = item.name
+        else 
+            name="???"
+        end
+        local option = {
+            name=name,
+            action=function() end
+        }
+        table.insert(menu.options, option)
+    end
+    return menu
+end
+
 return PauseMenu
+
+

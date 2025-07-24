@@ -38,6 +38,7 @@ function Player:new()
     instance.groundDetectionFixture:setUserData({type=COLLIDER_TYPE_PLAYER_GROUND_DETECTION, obj=instance})
 
     instance.itemsCollected={}
+    instance.itemCount=0
 
     instance.hasJump=true
     instance.isJumping=false
@@ -108,13 +109,13 @@ function Player:update(dt)
     if gameState ~= "DEAD" then
         local maxSpeed=200
         self.velocity.x, self.velocity.y = self.body:getLinearVelocity()
-        if love.keyboard.isDown("left") then
+        if love.keyboard.isDown("left") or (not isempty(controller) and controller:isGamepadDown("dpleft")) then
             self.velocity.x = self.velocity.x-40
             if self.velocity.x < -maxSpeed then
                 self.velocity.x=-maxSpeed
             end
             self.currentAnimation=self.animations.left
-        elseif love.keyboard.isDown("right") then
+        elseif love.keyboard.isDown("right") or (not isempty(controller) and controller:isGamepadDown("dpright")) then
             self.velocity.x = self.velocity.x+40
             if self.velocity.x > maxSpeed then
                 self.velocity.x=maxSpeed
