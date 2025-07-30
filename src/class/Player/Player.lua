@@ -11,7 +11,7 @@ function Player:new()
     instance.velocity = {x=0, y=0}
     instance.spriteSheet = love.graphics.newImage('assets/sprites/guy-sheet.png')
 
-    instance.health=PlayerHealth:new(5)
+    
 
     instance.invincibilityFrames=0
     instance.invincibilityAnimationToggle=true
@@ -51,14 +51,16 @@ function Player:init()
     self.body:setLinearVelocity(0, 0)
 
     --Initialize the player's health
-    self.health:spawn()
+    self.health=PlayerHealth:new(5)
+    self.health:set()
+    self.invincibilityFrames=INVINCIBILITY_FRAMES
 end
 
 function Player:place(pos)
     --Set the spawn to the Map's currently enabled checkpoint
     local currentCheckpoint = map.currentCheckpoint
     if isempty(pos) then
-        self.body:setPosition(currentCheckpoint.pos.x, currentCheckpoint.pos.y)
+        self.body:setPosition(currentCheckpoint.pos.x, currentCheckpoint.pos.y-10)
     else
         self.body:setPosition(pos.x, pos.y)
     end
@@ -67,6 +69,7 @@ function Player:place(pos)
 
     --Update the game state
     gameState = "PLAYING"
+
 
 end
 
@@ -102,7 +105,9 @@ function Player:jump()
 end
 
 function Player:warp(x, y)
+    
     self.body:setPosition(x,y)
+    
 end
 
 function Player:update(dt)
@@ -138,6 +143,7 @@ function Player:update(dt)
 
         
     end
+    
 
     
 end

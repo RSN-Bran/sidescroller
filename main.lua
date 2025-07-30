@@ -13,12 +13,19 @@ end
 function love.update(dt)
     if gameState==GAME_STATE_PLAYING then
         world:update(dt)
+        local contacts= world:getContacts()
+        for i,v in ipairs(contacts) do
+            a,b=v:getFixtures()
+            persistentContact(a,b)
+        end
         player:update(dt)
         map:update(dt)
         updateCamera(dt)
-        
+    elseif gameState==GAME_STATE_CREDITS then
+        credits:update(dt)
     else
         pauseMenu:update(dt)
+        
     end
 
     executeUpdateCallbacks(dt)
@@ -48,6 +55,10 @@ function love.draw()
         pauseMenu:draw()
     end
     love.graphics.pop()
+
+    if gameState==GAME_STATE_CREDITS then
+        credits:draw()
+    end
     
     
 end
@@ -118,6 +129,7 @@ function loadRequirements()
     require('/src/class/Item')
     require('/src/class/Settings')
     require('/src/class/Door')
+    require('/src/class/Credit')
     --require('/src/class/Settings')
 
     require('/src/constants')
@@ -129,6 +141,7 @@ function loadRequirements()
     --data
     require('/src/data/maps')
     require('/src/data/items')
+    require('/src/data/credits')
     
 
     require('/global/functions')

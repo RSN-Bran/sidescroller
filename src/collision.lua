@@ -17,11 +17,11 @@ function OnCollisionEnter(a,b,contact)
 
         --Touch Spike
         elseif o1.type==COLLIDER_TYPE_PLAYER and o2.type==COLLIDER_TYPE_SPIKE then
-            local callback = function() player:hurt(1) end
-            table.insert(callbacks, callback)
+            collideWithHitbox(o2.obj)
+           
         elseif o2.type==COLLIDER_TYPE_PLAYER and o1.type==COLLIDER_TYPE_SPIKE then
-            local callback = function() player:hurt(1) end
-            table.insert(callbacks, callback)
+            collideWithHitbox(o1.obj)
+            
         elseif o1.type==COLLIDER_TYPE_PLAYER and o2.type==COLLIDER_TYPE_WALL then
             --player.hasJump=true
         elseif o2.type==COLLIDER_TYPE_PLAYER and o1.type==COLLIDER_TYPE_WALL then
@@ -77,6 +77,7 @@ function OnCollisionExit(a,b,contact)
 end
 
 function presolve(a,b,contact)
+    local o1,o2 = a:getUserData(), b:getUserData()
     
 
 end
@@ -84,8 +85,25 @@ end
 function postsolve(a,b,contact)
     local o1,o2 = a:getUserData(), b:getUserData()
 
-    
+end
 
+function persistentContact(a,b)
+    local o1,o2 = a:getUserData(), b:getUserData()
+    if o1 and o2 then
+        --Touch Spike
+        if o1.type==COLLIDER_TYPE_PLAYER and o2.type==COLLIDER_TYPE_SPIKE then
+            local callback = function() player:hurt(o2.obj.damage) end
+            table.insert(callbacks, callback)
+        elseif o2.type==COLLIDER_TYPE_PLAYER and o1.type==COLLIDER_TYPE_SPIKE then
+            local callback = function() player:hurt(o1.obj.damage) end
+            table.insert(callbacks, callback)
+        end
+    end
+end
+
+function collideWithHitbox(hitObj)
+    local callback = function() player:hurt(hitObj.damage) end
+    table.insert(callbacks, callback)
 end
 
 function activateCheckpoint(checkpoint)
@@ -97,9 +115,23 @@ function enterDoor(door)
     if door.isActive==true then
         local callback = function() 
             map = setMap(MAP_TABLE[door.toMapId]);
-            local newDoor=filter(map.doors.objects, "id", "=", door.toDoorId)[1]
+            local newDoor=filter(map.doors.objects, "doorId", "=", door.toDoorId)[1]
             newDoor.isActive=false
-            player:place({x=newDoor.pos.x, y=newDoor.pos.y}) 
+
+            if newDoor.isHorizontal then
+                newX=newDoor.pos.x+(newDoor.width/2)
+                newY=newDoor.pos.y
+            else
+                newY=newDoor.pos.y+newDoor.height-5
+                if newDoor.pos.x < 0 then
+                    newX=newDoor.pos.x+newDoor.width
+                else
+                    newX=newDoor.pos.x
+                end
+                
+            end
+            player:place({x=newX, y=newY}) 
+            
         end
         table.insert(callbacks, callback)
     end

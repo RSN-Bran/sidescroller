@@ -22,6 +22,10 @@ PAUSE_OPTIONS={
             action=function() pauseMenu:loadMenu(SETTINGS_OPTIONS) end
         },
         {
+            name="Credits",
+            action=function() credits = ObjectList:new(OBJECT_TYPE_CREDIT) credits:add(CREDITS_TABLE) gameState = GAME_STATE_CREDITS end
+        },
+        {
             name="Quit",
             action=function() love.event.quit() end
         }

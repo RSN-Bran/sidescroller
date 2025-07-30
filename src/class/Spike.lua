@@ -6,6 +6,8 @@ function Spike:new(v)
     local instance = setmetatable({}, Spike)
 
     instance.pos = {x=v.x, y=v.y}
+    instance.id=v.id
+    instance.damage=1
     instance.width, instance.height = v.width, v.height
     instance.body=love.physics.newBody(world, instance.pos.x, instance.pos.y, "static")
     instance.body:setFixedRotation(true)
@@ -13,6 +15,7 @@ function Spike:new(v)
     instance.fixture=love.physics.newFixture(instance.body, instance.shape)
     instance.fixture:setUserData({type="Spike", obj=instance})
     instance.fixture:setSensor(true)
+    instance.isActive=true
     
 
     return instance
@@ -30,4 +33,13 @@ function Spike:destroy()
     self.fixture:destroy()
     self.body:destroy()
     
+end
+
+function Spike:__tostring()
+    return 
+        "id:"..self.id.."\n"..
+        "pos.x:"..self.pos.x.."\n"..
+        "pos.y:"..self.pos.y.."\n"..
+        "damage"..self.damage.."\n"..
+        "isActive:"..tostring(self.isActive)
 end

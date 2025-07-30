@@ -5,6 +5,7 @@ function Terrain:new(v)
     
     local instance = setmetatable({}, Terrain)
 
+    instance.id=v.id
     instance.pos = {x=v.x, y=v.y}
     instance.width, instance.height = v.width, v.height
     instance.body=love.physics.newBody(world, instance.pos.x, instance.pos.y, "static")
@@ -28,4 +29,13 @@ end
 function Terrain:destroy()
     self.fixture:destroy()
     self.body:destroy()
+end
+
+function Terrain:__tostring()
+    return 
+        "id:"..self.id.."\n"..
+        "pos.x:"..self.pos.x.."\n"..
+        "pos.y:"..self.pos.y.."\n"..
+        "height:"..self.height.."\n"..
+        "width:"..self.width
 end

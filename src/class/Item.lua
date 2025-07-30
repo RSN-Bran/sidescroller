@@ -8,7 +8,7 @@ function Item:new(v)
     instance.body=love.physics.newBody(world, instance.pos.x, instance.pos.y, "kinematic")
 
     instance.itemId=v.properties.itemId
-    if contains(player.itemsCollected, instance.itemId) then
+    if player.itemsCollected[instance.itemId] == true then
         instance.shape=nil
         instance.fixture=nil
         instance.isActive=false
@@ -20,16 +20,26 @@ function Item:new(v)
         instance.isActive=true
     end
 
+    instance.sounds={}
+    instance.sounds.collect=love.audio.newSource('assets/sounds/item_sound.wav', "static")
+
+    instance.spriteSheet = love.graphics.newImage('assets/sprites/coin-sheet.png')
+    instance.spriteGrid = anim8.newGrid(16, 16, instance.spriteSheet:getWidth(), instance.spriteSheet:getHeight())
+    instance.animations = {}
+    instance.animations.idle = anim8.newAnimation( instance.spriteGrid('1-8', 1), 0.2)
+    instance.currentAnimation=instance.animations.idle
+
     return instance
 end
 
 
 function Item:update(dt)
+    self.currentAnimation:update(dt)
 end
 
 function Item:draw()
     if self.isActive then
-        love.graphics.rectangle("line", self.pos.x, self.pos.y, 5,5)
+        self.currentAnimation:draw(self.spriteSheet, self.pos.x, self.pos.y, nil)
     end
 end
 
@@ -42,5 +52,14 @@ end
 
 function Item:collect()
     self.isActive=false
+    self.sounds.collect:play()
     self:destroy()
+end
+
+function Item:__tostring()
+    return 
+        "itemId:"..self.itemId.."\n"..
+        "pos.x:"..self.pos.x.."\n"..
+        "pos.y:"..self.pos.y.."\n"..
+        "isActive:"..tostring(self.isActive)
 end

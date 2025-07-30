@@ -21,6 +21,8 @@ function ObjectList:add(objects)
             object = Terrain:new(object)
         elseif self.type==OBJECT_TYPE_SPIKE then
             object = Spike:new(object)
+        elseif self.type==OBJECT_TYPE_CREDIT then
+            object = Credit:new(object, i)
         end
         table.insert(self.objects, object)  
     end
@@ -42,4 +44,12 @@ function ObjectList:destroy()
     for i,object in ipairs(self.objects) do
         object:destroy()
     end
+end
+
+function ObjectList:__tostring()
+    retStr=""
+    for i,v in ipairs(self.objects) do
+        retStr=retStr..tostring(v).."\n".."----".."\n"
+    end
+    return retStr
 end
