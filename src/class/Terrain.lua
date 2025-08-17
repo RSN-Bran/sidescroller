@@ -23,7 +23,14 @@ function Terrain:update(dt)
     self.pos.x, self.pos.y = self.body:getPosition()
 end
 function Terrain:draw()
-    --love.graphics.rectangle("line", self.pos.x, self.pos.y, self.width, self.height)
+    if DEBUG==true then
+        
+        self:drawColliders()
+    end
+end
+
+function Terrain:drawColliders()
+    love.graphics.rectangle("line", self.pos.x, self.pos.y, self.width, self.height)
 end
 
 function Terrain:destroy()

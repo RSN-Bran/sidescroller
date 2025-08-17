@@ -31,21 +31,9 @@ function OnCollisionEnter(a,b,contact)
         elseif o2.type==COLLIDER_TYPE_PLAYER_GROUND_DETECTION and o1.type==COLLIDER_TYPE_WALL then
             player.hasJump=true
         elseif o1.type==COLLIDER_TYPE_WARP and o2.type==COLLIDER_TYPE_PLAYER then
-            if o1.obj.isActive then
-                local nextWarp = filter(map.warps.objects, "warpToId", "=", o1.obj.id)[1]
-                nextWarp.isActive=false
-                local callback = function() player:warp(nextWarp.pos.x, nextWarp.pos.y) end
-                table.insert(callbacks, callback)
-                
-            end
+            enterWarp(o1.obj)
         elseif o2.type==COLLIDER_TYPE_WARP and o1.type==COLLIDER_TYPE_PLAYER then
-            if o2.obj.isActive then
-                local nextWarp = filter(map.warps.objects, "warpToId", "=", o2.obj.id)[1]
-                nextWarp.isActive=false
-                local callback = function() player:warp(nextWarp.pos.x, nextWarp.pos.y) end
-                table.insert(callbacks, callback)
-                
-            end
+            enterWarp(o2.obj)
         end
         if o1.type==COLLIDER_TYPE_PLAYER and o2.type==OBJECT_TYPE_ITEM then
             collectItem(o2.obj)
@@ -61,9 +49,9 @@ function OnCollisionExit(a,b,contact)
     local o1,o2 = a:getUserData(), b:getUserData()
     if o1 and o2 then
         if o1.type==COLLIDER_TYPE_WARP and o2.type==COLLIDER_TYPE_PLAYER then
-            o1.obj.isActive=true
+            exitDoor(o1.obj)
         elseif o2.type==COLLIDER_TYPE_WARP and o1.type==COLLIDER_TYPE_PLAYER then
-            o2.obj.isActive=true
+            exitDoor(o2.obj)
         end
 
         if o1.type==COLLIDER_TYPE_DOOR and o2.type==COLLIDER_TYPE_PLAYER then
@@ -109,6 +97,28 @@ end
 function activateCheckpoint(checkpoint)
     map.currentCheckpoint=checkpoint
     checkpoint:activate()
+end
+
+function enterWarp(warp)
+    if warp.isActive==true then
+        local callback = function() 
+            if map.mapId~=warp.toMapId then
+                print("test")
+                map = setMap(MAP_TABLE[warp.toMapId]);
+            end
+            local newWarp=filter(map.warps.objects, "warpId", "=", warp.toWarpId)[1]
+            newWarp.isActive=false
+            player:warp(newWarp.pos.x, newWarp.pos.y)
+            player:place({x=newWarp.pos.x, y=newWarp.pos.y}) 
+            
+        end
+        table.insert(callbacks, callback)
+    end
+    
+end
+
+function exitDoor(door)
+    door.isActive=true 
 end
 
 function enterDoor(door)

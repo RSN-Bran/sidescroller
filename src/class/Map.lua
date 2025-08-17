@@ -6,6 +6,7 @@ function Map:new(stiFile)
     instance.stiFile = stiFile
 
     local stiProperties = sti(stiFile)
+    instance.mapId=stiProperties.properties.mapId
     instance.name = stiProperties.properties.name
     instance.dimensions = {x=stiProperties.width, y=stiProperties.height}
     instance.pixelDimensions = {x=instance.dimensions.x*BASE_TILE_SIZE, y=instance.dimensions.y*BASE_TILE_SIZE}
@@ -16,16 +17,6 @@ function Map:load()
     self.stiProperties = sti(self.stiFile)
 
     self.tileLayer = filter(self.stiProperties.layers, "name", "=", "Tile Layer 1")[1]
-    local spawnObjs = filter(self.stiProperties.layers, "name", "=", "Spawns")[1]
-
-    
-
-    if not isempty(spawnObjs) then
-        self.checkpoints = Checkpoints:new()
-        for i,v in ipairs(spawnObjs.objects) do
-            self.checkpoints:add(v)
-        end
-    end
 
     --TERRAIN
     local terrainObjs = getObjectsFromLayer(self.stiProperties.layers, "Terrain")
@@ -52,7 +43,10 @@ function Map:load()
     self.items=ObjectList:new(OBJECT_TYPE_ITEM)
     self.items:add(itemObjs)
 
-    self.currentCheckpoint = filter(self.checkpoints.checkpoints, "isInitial", "=", true)[1]
+    --Checkpoints
+    local checkpointObjs = getObjectsFromLayer(self.stiProperties.layers, "Checkpoints")
+    self.checkpoints=ObjectList:new(OBJECT_TYPE_CHECKPOINT)
+    self.checkpoints:add(checkpointObjs)
 end
 
 function Map:update(dt)
@@ -63,13 +57,16 @@ function Map:update(dt)
     self.items:update(dt)
 end
 function Map:draw()
+    self.stiProperties:drawLayer(self.tileLayer)
     self.terrains:draw()
 
     self.checkpoints:draw()
     self.warps:draw()
     self.doors:draw()
     self.items:draw()
-    self.stiProperties:drawLayer(self.tileLayer)
+    
+
+    
 end
 
 function Map:destroy()
@@ -78,6 +75,7 @@ function Map:destroy()
     self.warps:destroy()
     self.doors:destroy()
     self.items:destroy()
+    self.checkpoints:destroy()
 end
 
 return Map

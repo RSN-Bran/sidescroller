@@ -40,6 +40,8 @@ function Player:new()
     instance.itemsCollected={}
     instance.itemCount=0
 
+    instance.checkpoint={mapId=1, checkpointId=1}
+
     instance.hasJump=true
     instance.isJumping=false
     
@@ -49,16 +51,18 @@ end
 function Player:init()
     --Ensure momentum doesn't carry over
     self.body:setLinearVelocity(0, 0)
-
     --Initialize the player's health
     self.health=PlayerHealth:new(5)
     self.health:set()
     self.invincibilityFrames=INVINCIBILITY_FRAMES
+    if map.mapId ~= player.checkpoint.mapId then
+        map = setMap(MAP_TABLE[player.checkpoint.mapId])
+    end
 end
 
 function Player:place(pos)
     --Set the spawn to the Map's currently enabled checkpoint
-    local currentCheckpoint = map.currentCheckpoint
+    local currentCheckpoint = filter(map.checkpoints.objects, "checkpointId", "=", self.checkpoint.checkpointId)[1]
     if isempty(pos) then
         self.body:setPosition(currentCheckpoint.pos.x, currentCheckpoint.pos.y-10)
     else
@@ -105,9 +109,7 @@ function Player:jump()
 end
 
 function Player:warp(x, y)
-    
     self.body:setPosition(x,y)
-    
 end
 
 function Player:update(dt)
@@ -154,5 +156,12 @@ function Player:draw()
             self.currentAnimation:draw(self.spriteSheet, self.pos.x, self.pos.y, nil)
         end
     end
+    if DEBUG==true then
+       self:drawColliders() 
+    end
+end
+
+function Player:drawColliders()
+    love.graphics.rectangle("line", self.pos.x, self.pos.y, self.width, self.height)
 end
 

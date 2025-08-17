@@ -41,7 +41,10 @@ function Item:draw()
     if self.isActive then
         self.currentAnimation:draw(self.spriteSheet, self.pos.x, self.pos.y, nil)
     end
+
+    
 end
+
 
 function Item:destroy()
     if not isempty(self.body) then

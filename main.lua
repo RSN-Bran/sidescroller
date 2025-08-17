@@ -178,9 +178,11 @@ function gameStart()
     gravity = 1000
     world = love.physics.newWorld(0,gravity)
     world:setCallbacks(OnCollisionEnter, OnCollisionExit, presolve, postsolve)
+    
     player = Player:new()
+    map = setMap(MAP_TABLE[player.checkpoint.mapId])
     player:init()
-    map = setMap(MAP_TABLE[1])
+    
     player:place()
     
     pauseMenu=PauseMenu:new()

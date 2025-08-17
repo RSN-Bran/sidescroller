@@ -21,6 +21,8 @@ function ObjectList:add(objects)
             object = Terrain:new(object)
         elseif self.type==OBJECT_TYPE_SPIKE then
             object = Spike:new(object)
+        elseif self.type==OBJECT_TYPE_CHECKPOINT then
+            object = Checkpoint:new(object)
         elseif self.type==OBJECT_TYPE_CREDIT then
             object = Credit:new(object, i)
         end

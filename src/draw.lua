@@ -7,7 +7,7 @@ function drawColliders()
                     local shape=bodyData.shape
                     if shape:getType()=="polygon" then
                         local x,y=v:getPosition()
-                        love.graphics.rectangle("line", x, y, bodyData.width, bodyData.height)
+                        --love.graphics.rectangle("line", x, y, bodyData.width, bodyData.height)
                     end
                 end
             end

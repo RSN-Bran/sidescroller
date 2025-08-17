@@ -10,7 +10,7 @@ return {
   tilewidth = 16,
   tileheight = 16,
   nextlayerid = 10,
-  nextobjectid = 73,
+  nextobjectid = 74,
   properties = {
     ["mapId"] = 1
   },
@@ -340,8 +340,8 @@ return {
           visible = true,
           properties = {
             ["doorId"] = 2,
-            ["toDoorId"] = 2,
-            ["toMapId"] = 2
+            ["toDoorId"] = 1,
+            ["toMapId"] = 3
           }
         },
         {
@@ -424,7 +424,9 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            ["warpId"] = 51
+            ["toMapId"] = 1,
+            ["toWarpId"] = 2,
+            ["warpId"] = 1
           }
         },
         {
@@ -439,7 +441,27 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            ["warpId"] = 49
+            ["toMapId"] = 1,
+            ["toWarpId"] = 1,
+            ["warpId"] = 2
+          }
+        },
+        {
+          id = 73,
+          name = "",
+          type = "",
+          shape = "point",
+          x = 528,
+          y = 160,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["toMapId"] = 3,
+            ["toWarpId"] = 1,
+            ["usable"] = false,
+            ["warpId"] = 3
           }
         }
       }
@@ -448,7 +470,7 @@ return {
       type = "objectgroup",
       draworder = "topdown",
       id = 3,
-      name = "Spawns",
+      name = "Checkpoints",
       class = "",
       visible = true,
       opacity = 1,
@@ -469,7 +491,9 @@ return {
           height = 0,
           rotation = 0,
           visible = true,
-          properties = {}
+          properties = {
+            ["checkpointId"] = 1
+          }
         },
         {
           id = 7,
@@ -482,7 +506,9 @@ return {
           height = 0,
           rotation = 0,
           visible = true,
-          properties = {}
+          properties = {
+            ["checkpointId"] = 2
+          }
         }
       }
     }

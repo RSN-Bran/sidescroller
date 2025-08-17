@@ -24,23 +24,47 @@ function Checkpoint:new(v)
     instance.fixture:setUserData({type="Checkpoint", obj=instance})
     instance.fixture:setSensor(true)
 
+    instance.checkpointId=v.properties.checkpointId
+    instance.mapId=map.mapId
+
     return instance
+end
+
+function Checkpoint:destroy()
+    self.fixture:destroy()
+    self.body:destroy()
 end
 
 function Checkpoint:activate()
     self.isCollected=true
-    self.currentAnimation=self.animations.idleActive
-end
+    player.checkpoint.mapId=self.mapId
+    player.checkpoint.checkpointId=self.checkpointId
+
+    end
 
 function Checkpoint:update(dt)
     self.body:setLinearVelocity(0, 0)
     self.pos.x, self.pos.y = self.body:getPosition()
+    if player.checkpoint.mapId==self.mapId and player.checkpoint.checkpointId==self.checkpointId then
+        
+        self.currentAnimation=self.animations.idleActive
+    else
+        self.currentAnimation=self.animations.idleInactive
+    end
     self.currentAnimation:update(dt)
 end
 
 function Checkpoint:draw()
-    self.currentAnimation:draw(self.spriteSheet, self.pos.x, self.pos.y, nil)
+    
     self.currentAnimation:draw(self.spriteSheet, self.pos.x-BASE_TILE_SIZE, self.pos.y-BASE_TILE_SIZE, nil)
+end
+
+function Checkpoint:__tostring()
+    return 
+        "checkpointId:"..self.checkpointId.."\n"..
+        "mapId:"..self.mapId.."\n"..
+        "pos.x:"..self.pos.x.."\n"..
+        "pos.y:"..self.pos.y
 end
 
 
@@ -50,6 +74,12 @@ function Checkpoints:new()
     local instance = setmetatable({}, Checkpoints)
     instance.checkpoints = {}
     return instance
+end
+
+function Checkpoints:destroy()
+    for i,checkpoint in ipairs(self.checkpoints) do
+        checkpoint:destroy(dt)
+    end
 end
 
 function Checkpoints:add(v)
