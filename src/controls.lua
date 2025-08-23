@@ -1,3 +1,4 @@
+--Pressed Functions
 function startPressed()
     if gameState==GAME_STATE_PLAYING then
         gameState = GAME_STATE_PAUSE
@@ -19,6 +20,19 @@ function downPressed()
     end
 end
 
+function rightPressed()
+    if gameState==GAME_STATE_PLAYING then
+        player:prepDash("RIGHT")
+    end
+end
+
+function leftPressed()
+    if gameState==GAME_STATE_PLAYING then
+        player:prepDash("LEFT")
+    end
+end
+
+
 function aPressed()
     if gameState==GAME_STATE_PAUSE then
         local action = pauseMenu.pauseOptions.options[pauseMenu.currentOptionIndex].action
@@ -26,7 +40,7 @@ function aPressed()
             action()
         end
     elseif gameState==GAME_STATE_PLAYING then
-        player:jump()
+        player:initiateJump()
     elseif gameState==GAME_STATE_DEAD then
         player:spawn()
     end
@@ -39,4 +53,44 @@ function bPressed()
             action()
         end
     end
+end
+
+--Released Functions
+function startReleased()
+end
+
+function upReleased()
+end
+
+function downReleased()
+
+end
+
+function aReleased()
+    if gameState==GAME_STATE_PLAYING then
+        player:endJump()
+    end
+end
+
+function bReleased()
+end
+
+--Is Down Functions
+function startIsDown()
+end
+
+function upIsDown()
+end
+
+function downIsDown()
+
+end
+
+function aIsDown()
+    if gameState==GAME_STATE_PLAYING then
+        player:endJump()
+    end
+end
+
+function bIsDown()
 end

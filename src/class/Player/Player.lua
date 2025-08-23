@@ -42,8 +42,16 @@ function Player:new()
 
     instance.checkpoint={mapId=1, checkpointId=1}
 
+    instance.maxJumpFrames=12
+    instance.currentJumpFrames=0
+
+    instance.jumpImpulses = {-60, 0, 0, -40, 0, 0, -20, 0, 0, -15, 0 ,0 }
     instance.hasJump=true
     instance.isJumping=false
+
+    instance.dashWindow=10
+    instance.currentDashWindow={frames=0, direction=nil}
+    instance.isDashing=false
     
     return instance
 end
@@ -97,15 +105,51 @@ function Player:kill()
     gameState = "DEAD"
 end
 
-function Player:jump()
+function Player:initiateJump()
     if self.hasJump then
-        gravity = 10
-        self.body:applyLinearImpulse(0, -100, self.pos.x, self.pos.y)
-        self.pos.x, self.pos.y = self.body:getPosition()
+        
         self.hasJump=false
         self.isJumping=true
     end
     
+end
+
+function Player:continueJump()
+    if self.isJumping then
+        self.currentJumpFrames=self.currentJumpFrames+1
+        self.body:applyLinearImpulse(0, self.jumpImpulses[self.currentJumpFrames], self.pos.x, self.pos.y)
+        self.pos.x, self.pos.y = self.body:getPosition()
+        self.velocity.x, self.velocity.y = self.body:getLinearVelocity()
+        
+        if self.currentJumpFrames >= self.maxJumpFrames then
+            self:endJump()
+        end
+    end
+end
+
+function Player:prepDash(direction)
+    if direction == self.currentDashWindow.direction then
+        self:dash()
+    else
+        self.currentDashWindow={direction=direction, frames=1}
+    end
+    
+    
+end
+
+function Player:dash()
+    if self.currentDashWindow.direction=="LEFT" then
+        self.body:applyLinearImpulse(-1000, 0, self.pos.x, self.pos.y)
+    else
+        self.body:applyLinearImpulse(1000, 0, self.pos.x, self.pos.y)
+    end
+    self.currentDashWindow.direction=nil
+    self.isDashing=true
+end
+
+function Player:endJump()
+    self.isJumping=false
+    self.currentJumpFrames=0
 end
 
 function Player:warp(x, y)
@@ -114,6 +158,11 @@ end
 
 function Player:update(dt)
     if gameState ~= "DEAD" then
+        if self.dashWindow < self.currentDashWindow.frames then
+            self.currentDashWindow = {frames=0, direction=nil}
+        elseif self.currentDashWindow.frames > 0 then
+            self.currentDashWindow.frames=self.currentDashWindow.frames+1
+        end
         local maxSpeed=200
         self.velocity.x, self.velocity.y = self.body:getLinearVelocity()
         if love.keyboard.isDown("left") or (not isempty(controller) and controller:isGamepadDown("dpleft")) then
@@ -129,7 +178,14 @@ function Player:update(dt)
             end
             self.currentAnimation=self.animations.right
         else
+            if self.hasJump == true then
+                self.velocity.x=0
+            end
             self.currentAnimation=self.animations.idle
+        end
+
+        if love.keyboard.isDown("z") or (not isempty(controller) and controller:isGamepadDown("a")) then
+            self:continueJump()
         end
 
         self.currentAnimation:update(dt)

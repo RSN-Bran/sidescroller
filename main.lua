@@ -74,10 +74,28 @@ function love.keypressed(key)
         upPressed()
     elseif key=="down" then
         downPressed()
+    elseif key=="left" then
+        leftPressed()
+    elseif key=="right" then
+        rightPressed()
     end
 end
 
-function love.gamepadpressed(joystick, button)
+function love.keyreleased(key)
+    if key=="lshift" then
+        startReleased()
+    elseif key=="z" then
+        aReleased()
+    elseif key=="x" then
+        bReleased()
+    elseif key=="up" then
+        upReleased()
+    elseif key=="down" then
+        downReleased()
+    end
+end
+
+function love.gamepadPressed(joystick, button)
     if isempty(controller) then
         controller=joystick
     end
@@ -91,6 +109,27 @@ function love.gamepadpressed(joystick, button)
         upPressed()
     elseif button=="dpdown" then
         downPressed()
+    elseif button=="dpleft" then
+        leftPressed()
+    elseif button=="dpright" then
+        rightPressed()
+    end
+end
+
+function love.gamepadreleased(joystick, button)
+    if isempty(controller) then
+        controller=joystick
+    end
+    if button=="start" then
+        startReleased()
+    elseif button=="a" then
+        aReleased()
+    elseif button=="b" then
+        bReleased()
+    elseif button=="dpup" then
+        upReleased()
+    elseif button=="dpdown" then
+        downReleased()
     end
 end
 
@@ -153,7 +192,7 @@ end
 function loadSettings()
     cam = camera()
     settings = Settings:new()
-    settings:updateScale(1)
+    settings:updateScale(settings.scale)
     
     
 end

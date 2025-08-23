@@ -5,7 +5,7 @@ function Settings:new(v)
     local instance = setmetatable({}, Settings)
 
 
-    instance.scale=1
+    instance.scale=2
 
     
 

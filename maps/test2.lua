@@ -10,7 +10,7 @@ return {
   tilewidth = 16,
   tileheight = 16,
   nextlayerid = 10,
-  nextobjectid = 74,
+  nextobjectid = 76,
   properties = {
     ["mapId"] = 1
   },
@@ -462,6 +462,24 @@ return {
             ["toWarpId"] = 1,
             ["usable"] = false,
             ["warpId"] = 3
+          }
+        },
+        {
+          id = 75,
+          name = "",
+          type = "",
+          shape = "point",
+          x = 304,
+          y = 208,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["toMapId"] = 4,
+            ["toWarpId"] = 1,
+            ["usable"] = true,
+            ["warpId"] = 4
           }
         }
       }
